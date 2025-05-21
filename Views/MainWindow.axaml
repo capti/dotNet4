@@ -1,0 +1,137 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AircraftApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AircraftApp.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="Управление ВПП"
+        Width="800" Height="600">
+    
+    <TabControl>
+        <TabItem Header="Управление ВПП">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Панель управления ВПП" FontSize="20" Margin="0,0,0,10"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                        <TextBlock Text="Длина ВПП (м):" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Text="{Binding RunwayLength}" Width="100" Margin="0,0,10,0"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                        <Button Command="{Binding CreateAirplaneCommand}" Content="Создать самолет" Margin="0,0,10,0"/>
+                        <Button Command="{Binding CreateHelicopterCommand}" Content="Создать вертолет" Margin="0,0,10,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="20,0,0,0">
+                    <TextBlock Text="Управление" FontSize="16" Margin="0,0,0,10"/>
+                    <Button Command="{Binding TakeOffCommand}" Content="Взлет" Margin="0,0,0,10"/>
+                    <Button Command="{Binding LandCommand}" Content="Посадка"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                    <TextBlock Text="Список воздушных судов:" FontSize="16" Margin="0,20,0,10"/>
+                    <ListBox ItemsSource="{Binding AircraftList}"
+                             SelectedItem="{Binding CurrentAircraft}"
+                             Height="200">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Type}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <TextBlock Text="{Binding Status}" Margin="0,20,0,0" FontSize="16"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        
+        <TabItem Header="Рефлексия">
+            <StackPanel Margin="10">
+                <TextBlock Text="Панель рефлексии" FontSize="20" Margin="0,0,0,10"/>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <Button Command="{Binding LoadAssemblyCommand}" Content="Выбрать DLL файл" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding AssemblyPath}" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Margin="0,20,0,10">
+                    <TextBlock Text="Доступные классы:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding AvailableTypes}"
+                              SelectedItem="{Binding SelectedType}"
+                              Width="400" HorizontalAlignment="Left">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FullName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel Margin="0,10,0,10">
+                    <TextBlock Text="Параметры конструктора:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ItemsControl ItemsSource="{Binding ConstructorParameters}" Margin="0,5,0,5">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding ParameterType.Name}" Width="100" Margin="5,0"/>
+                                    <TextBox Text="{Binding Value}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                
+                <StackPanel Margin="0,10,0,10">
+                    <TextBlock Text="Доступные методы:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding AvailableMethods}"
+                              SelectedItem="{Binding SelectedMethod}"
+                              Width="400" HorizontalAlignment="Left">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding Name}"/>
+                                    <Run Text="("/>
+                                    <Run Text="{Binding Converter={StaticResource MethodParametersConverter}}"/>
+                                    <Run Text=")"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel Margin="0,10,0,10">
+                    <TextBlock Text="Параметры метода:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ItemsControl ItemsSource="{Binding Parameters}" Margin="0,5,0,5">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding ParameterType.Name}" Width="100" Margin="5,0"/>
+                                    <TextBox Text="{Binding Value}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                
+                <Button Command="{Binding ExecuteMethodCommand}" Content="Выполнить метод" Margin="0,10,0,0"/>
+                
+                <TextBlock Text="{Binding Result}" Margin="0,20,0,0" FontSize="16"/>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</Window>
